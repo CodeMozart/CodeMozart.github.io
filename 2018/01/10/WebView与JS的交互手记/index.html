@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="手机APP的开发越来越敏捷，很多地方如果可以用webView的形式代替原生开发，成为了不少团队的技术选择。webView虽然灵活，但是在操作体验和用户交互上还存在不少的缺陷。但因为webView应用的场景越来越多，原生WebView与JS的交互变得非常重要。本文主要记录了WebView与JS交互的几种主要方式，并且补充了自己使用过程中踩过的坑和心得。  方式1: WebViewJavascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WebView与JS的交互手记">
+<meta property="og:url" content="http://yoursite.com/2018/01/10/WebView与JS的交互手记/index.html">
+<meta property="og:site_name" content="CM&#39;s Blog">
+<meta property="og:description" content="手机APP的开发越来越敏捷，很多地方如果可以用webView的形式代替原生开发，成为了不少团队的技术选择。webView虽然灵活，但是在操作体验和用户交互上还存在不少的缺陷。但因为webView应用的场景越来越多，原生WebView与JS的交互变得非常重要。本文主要记录了WebView与JS交互的几种主要方式，并且补充了自己使用过程中踩过的坑和心得。  方式1: WebViewJavascript">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-10T11:44:29.334Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WebView与JS的交互手记">
+<meta name="twitter:description" content="手机APP的开发越来越敏捷，很多地方如果可以用webView的形式代替原生开发，成为了不少团队的技术选择。webView虽然灵活，但是在操作体验和用户交互上还存在不少的缺陷。但因为webView应用的场景越来越多，原生WebView与JS的交互变得非常重要。本文主要记录了WebView与JS交互的几种主要方式，并且补充了自己使用过程中踩过的坑和心得。  方式1: WebViewJavascript">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/10/WebView与JS的交互手记/"/>
+
+
+
+
+
+  <title>WebView与JS的交互手记 | CM's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CM's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/10/WebView与JS的交互手记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CodeMozart">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/gakki.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CM's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">WebView与JS的交互手记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-10T19:43:22+08:00">
+                2018-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>手机APP的开发越来越敏捷，很多地方如果可以用webView的形式代替原生开发，成为了不少团队的技术选择。webView虽然灵活，但是在操作体验和用户交互上还存在不少的缺陷。但因为webView应用的场景越来越多，原生WebView与JS的交互变得非常重要。本文主要记录了WebView与JS交互的几种主要方式，并且补充了自己使用过程中踩过的坑和心得。</p>
+<hr>
+<h3 id="方式1-WebViewJavascriptBridge"><a href="#方式1-WebViewJavascriptBridge" class="headerlink" title="方式1: WebViewJavascriptBridge"></a>方式1: WebViewJavascriptBridge</h3><h4 id="Issues"><a href="#Issues" class="headerlink" title="Issues"></a>Issues</h4><ul>
+<li>WKWebViewJavascriptBridge 在Xcode9上导致crash的解决方法:</li>
+<li><a href="https://github.com/marcuswestin/WebViewJavascriptBridge/issues/302" target="_blank" rel="external">官方给出的issue</a></li>
+</ul>
+<hr>
+<ul>
+<li>解决方式一：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler &#123;</div><div class="line">if (webView != _webView) &#123; return; &#125;</div><div class="line">NSURL *url = navigationAction.request.URL;</div><div class="line">__strong typeof(_webViewDelegate) strongDelegate = _webViewDelegate;</div><div class="line"></div><div class="line">if ([_base isWebViewJavascriptBridgeURL:url]) &#123;</div><div class="line">if ([_base isBridgeLoadedURL:url]) &#123;</div><div class="line">[_base injectJavascriptFile];</div><div class="line">&#125; else if ([_base isQueueMessageURL:url]) &#123;</div><div class="line">[self WKFlushMessageQueue];</div><div class="line">&#125; else &#123;</div><div class="line">[_base logUnkownMessage:url];</div><div class="line">&#125;</div><div class="line">decisionHandler(WKNavigationActionPolicyCancel);</div><div class="line">&#125; else &#123;</div><div class="line">/// 在这新添加了else</div><div class="line">if (strongDelegate &amp;&amp; [strongDelegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:decisionHandler:)]) &#123;</div><div class="line">[_webViewDelegate webView:webView decidePolicyForNavigationAction:navigationAction decisionHandler:decisionHandler];</div><div class="line">&#125; else &#123;</div><div class="line">decisionHandler(WKNavigationActionPolicyAllow);</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<ul>
+<li>解决方式二：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler &#123;</div><div class="line">if (webView != _webView) &#123; return; &#125;</div><div class="line">NSURL *url = navigationAction.request.URL;</div><div class="line">__strong typeof(_webViewDelegate) strongDelegate = _webViewDelegate;</div><div class="line"></div><div class="line">if ([_base isWebViewJavascriptBridgeURL:url]) &#123;</div><div class="line">if ([_base isBridgeLoadedURL:url]) &#123;</div><div class="line">[_base injectJavascriptFile];</div><div class="line">&#125; else if ([_base isQueueMessageURL:url]) &#123;</div><div class="line">[self WKFlushMessageQueue];</div><div class="line">&#125; else &#123;</div><div class="line">[_base logUnkownMessage:url];</div><div class="line">&#125;</div><div class="line">decisionHandler(WKNavigationActionPolicyCancel);</div><div class="line">/// 在这新添加了return</div><div class="line">return;</div><div class="line">&#125;</div><div class="line"></div><div class="line">if (strongDelegate &amp;&amp; [strongDelegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:decisionHandler:)]) &#123;</div><div class="line">[_webViewDelegate webView:webView decidePolicyForNavigationAction:navigationAction decisionHandler:decisionHandler];</div><div class="line">&#125; else &#123;</div><div class="line">decisionHandler(WKNavigationActionPolicyAllow);</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h3 id="方式2-JavascriptCore"><a href="#方式2-JavascriptCore" class="headerlink" title="方式2: JavascriptCore"></a>方式2: JavascriptCore</h3><h4 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h4><p>JavaScriptCore 是 Objective-C 的API，作用于链接JS语言和OC语言。通过较少的代码，开发者可以从OC运行JS或者从JS调用OC。</p>
+<p>JavaScriptCore具有如下优势：</p>
+<ul>
+<li><ol>
+<li>让你能够在UIWebView之外使用JS，运行简单的JS脚本无需依赖于web view.</li>
+</ol>
+</li>
+<li><ol>
+<li>可以使用现代OC的特性比如blocks和collection subscripting.</li>
+</ol>
+</li>
+<li><ol>
+<li>可以很方便的在两种语言之间进行值传递或者对象传递。</li>
+</ol>
+</li>
+<li><ol>
+<li>可以创建混合对象：OC的对象能够拥有JS的值甚至函数作为属性。（比如一个原生的按钮在点击的时候触发JS的函数）</li>
+</ol>
+</li>
+</ul>
+<p>合适的使用场景：</p>
+<ul>
+<li><ol>
+<li>用在业务和原型经常会变化的地方。例如游戏。</li>
+</ol>
+</li>
+<li><ol>
+<li>用在不同的团队协作开发的时候。比如iOS程序员和前端程序员共同做一个项目。</li>
+</ol>
+</li>
+<li><ol>
+<li>用在需要能立刻看到变化的地方。JS语言是解释型的，所以更改JS代码我们可以看到app的实时变化。</li>
+</ol>
+</li>
+</ul>
+<p>原则上苹果不允许使用的场景：</p>
+<ul>
+<li><ol>
+<li>从远程服务器下载并运行JS代码。（即使是开发者自己的服务器用内购的方式也不行）</li>
+</ol>
+</li>
+<li><ol>
+<li>用户在app内编写JS代码并运行。</li>
+</ol>
+</li>
+</ul>
+<h4 id="JavaScriptCore-概览"><a href="#JavaScriptCore-概览" class="headerlink" title="JavaScriptCore 概览"></a>JavaScriptCore 概览</h4><p>主要的类和协议</p>
+<ul>
+<li><ol>
+<li>JSValue: 用来代表JS实体的OC对象。</li>
+</ol>
+</li>
+<li><ol>
+<li>JSManagedValue: 本质上还是JSValue对象，但是引入了内存管理的特性用来协调OC的引用计数和JS的GC。</li>
+</ol>
+</li>
+<li><ol>
+<li>JSContext：代表JS运行环境的对象。所有的JSValue对象都要依赖于JSContext。</li>
+</ol>
+</li>
+<li><ol>
+<li>JSExport：协议。可以用这个协议把原生对象转化成JS对象，把原生的属性和方法转化成JS的属性和方法。</li>
+</ol>
+</li>
+<li><ol>
+<li>JSVirtualMachine: 代表对象空间，拥有自己的heap和garbage collector.</li>
+</ol>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/gakki.jpeg"
+                alt="CodeMozart" />
+            
+              <p class="site-author-name" itemprop="name">CodeMozart</p>
+              <p class="site-description motion-element" itemprop="description">即使在编程，也要听莫扎特</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#方式1-WebViewJavascriptBridge"><span class="nav-number">1.</span> <span class="nav-text">方式1: WebViewJavascriptBridge</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Issues"><span class="nav-number">1.1.</span> <span class="nav-text">Issues</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方式2-JavascriptCore"><span class="nav-number">2.</span> <span class="nav-text">方式2: JavascriptCore</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前情提要"><span class="nav-number">2.1.</span> <span class="nav-text">前情提要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JavaScriptCore-概览"><span class="nav-number">2.2.</span> <span class="nav-text">JavaScriptCore 概览</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CodeMozart</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
