@@ -1,0 +1,1033 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="MingHe’s Notes" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="什么是单例单例是是程序开发中一种常见的设计模式。保证在程序运行过程，一个类只有一个实例。
+在面向对象语言中，我们使用一个类获取对象时，如果“多次创建对象”或者“多次获取对象”，得到的都是同一个对象，那么这个对象就是单例对象——同时只存在一个实例对象。
+创建对象时使用的类被称为单例类。
+单例对象的特点单例对象具有如下特点：
+
+可以被全局访问
+不会被释放
+创建过程只执行一次
+
+单例对象应用场景单例对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS中的单例">
+<meta property="og:url" content="http://yoursite.com/2015/06/03/iOS中的单例/index.html">
+<meta property="og:site_name" content="MingHe’s Notes">
+<meta property="og:description" content="什么是单例单例是是程序开发中一种常见的设计模式。保证在程序运行过程，一个类只有一个实例。
+在面向对象语言中，我们使用一个类获取对象时，如果“多次创建对象”或者“多次获取对象”，得到的都是同一个对象，那么这个对象就是单例对象——同时只存在一个实例对象。
+创建对象时使用的类被称为单例类。
+单例对象的特点单例对象具有如下特点：
+
+可以被全局访问
+不会被释放
+创建过程只执行一次
+
+单例对象应用场景单例对象">
+<meta property="og:updated_time" content="2015-12-10T07:23:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS中的单例">
+<meta name="twitter:description" content="什么是单例单例是是程序开发中一种常见的设计模式。保证在程序运行过程，一个类只有一个实例。
+在面向对象语言中，我们使用一个类获取对象时，如果“多次创建对象”或者“多次获取对象”，得到的都是同一个对象，那么这个对象就是单例对象——同时只存在一个实例对象。
+创建对象时使用的类被称为单例类。
+单例对象的特点单例对象具有如下特点：
+
+可以被全局访问
+不会被释放
+创建过程只执行一次
+
+单例对象应用场景单例对象">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'hide',
+    motion: true
+  };
+</script>
+
+  <title> iOS中的单例 | MingHe’s Notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9c2403a2988460bbccc538bd38698f4e";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MingHe’s Notes</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Quick notes</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            
+              <i class="menu-item-icon fa fa-search icon-next-search"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'SutMPkr7GJxMJPRsiWEd','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS中的单例
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-06-03T15:04:08+08:00" content="2015-06-03">
+              2015-06-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS心经/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS心经</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/06/03/iOS中的单例/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/06/03/iOS中的单例/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="什么是单例">什么是单例</h2><p><strong>单例</strong>是是程序开发中一种常见的设计模式。保证在程序运行过程，一个类只有一个实例。</p>
+<p>在面向对象语言中，我们使用一个类获取对象时，如果“多次创建对象”或者“多次获取对象”，得到的都是同一个对象，那么这个对象就是<strong>单例对象</strong>——同时只存在一个实例对象。</p>
+<p>创建对象时使用的类被称为<strong>单例类</strong>。</p>
+<h2 id="单例对象的特点">单例对象的特点</h2><p>单例对象具有如下特点：</p>
+<ol>
+<li>可以被全局访问</li>
+<li>不会被释放</li>
+<li>创建过程只执行一次</li>
+</ol>
+<h2 id="单例对象应用场景">单例对象应用场景</h2><p>单例对象通常应用于当一个对象需要在程序中的任意地方调用的时候。</p>
+<ol>
+<li>某个类经常使用（节约系统资源）</li>
+<li>定义工具类</li>
+<li>共享数据(界面中传值，但是不常用)</li>
+</ol>
+<p>例如：</p>
+<ul>
+<li><p>在设备旋转时，使用<code>UIApplication.SharedApplication</code>获取程序，进一步获取设备当前旋转方向。</p>
+</li>
+<li><p>进行数据存储时，<code>[NSUserDefaults standardUserDefaults]</code> 来设置用户偏好。</p>
+</li>
+<li><p>使用数据库连接类对数据库进行操作时，需要保证操作的是同一个数据库。</p>
+</li>
+</ul>
+<h2 id="单例使用的注意点">单例使用的注意点</h2><p>不要继承单例类。如果继承成了，会出现下面的问题：（因为一次性代码在程序中只执行一次）</p>
+<ul>
+<li>先创建子类永远是子类对象</li>
+<li>先创建父类永远是父类对象</li>
+</ul>
+<h2 id="用Objective-C语言实现单例">用Objective-C语言实现单例</h2><p>编写完整的单例要求比较高，不仅要求通过方法获取的对象是单例，如果对该对象进行<code>copy</code> <code>mutableCopy</code> <code>copyWithZone</code> 等操作时也要是同一份对象。所以要求我们必须重写这些方法。</p>
+<p>一般情况下，要实现单例，都会给单例提供一个快速创建实例的类方法</p>
+<p>###单例的类方法的命名规则<br>以<strong>share</strong>或者<strong>default</strong>开头，后面跟上类名。比如 <code>+ (instancetype)shareTools</code></p>
+<h3 id="在ARC下实现">在ARC下实现</h3><p>思路主要是这个单例类在第一次alloc的时候分配一次内存，以后再alloc的时候直接返回第一次分配的那个内存而不是重新分配。这里采用 <code>dispatch_once</code> 方法来达成目的，这样可以确保线程安全。</p>
+<p>另外，为了确保 <code>copy</code> 和 <code>mutableCopy</code> 等操作时不进行深拷贝，返回的也是同一个对象，所以要重写 <code>copyWithZone</code> 和 <code>mutableCopyWithZone</code> 方法。（需要实现NSCopying和NSMutableCopying协议）</p>
+<pre><code>+<span class="function"> (</span>instancetype<span class="function">)</span>shareTools 
+{
+   <span class="instruction"> return </span><span class="keyword">[</span><span class="keyword">[</span>self alloc] init];
+}
+
+
+// alloc的时候，会调用allocWithZone方法，给对象分配内存
++<span class="function"> (</span>instancetype<span class="function">)</span>allocWithZone:(struct _NSZone *<span class="function">)</span>zone
+{
+   <span class="keyword"> static</span> id instance;
+
+    /* 不推荐这种写法，有可能线程不安全
+   <span class="instruction"> if </span>(instance == nil<span class="function">)</span> {
+       <span class="instruction"> instance </span>= <span class="keyword">[</span>super allocWithZone:zone];
+    }
+     */
+
+   <span class="keyword"> static</span> dispatch_once_t onceToken;
+
+   <span class="function"> dispatch_once(</span>&amp;onceToken, ^{
+
+       <span class="instruction"> instance </span>= <span class="keyword">[</span>super allocWithZone:zone]
+
+    }<span class="function">)</span>;
+
+   <span class="instruction"> return </span>instance;
+}
+
+
+-<span class="function"> (</span>id<span class="function">)</span>copyWithZone:(NSZone *<span class="function">)</span>zone
+{
+   <span class="instruction"> return </span>self;
+}
+
+
+-<span class="function"> (</span>id<span class="function">)</span>mutableCopyWithZone:(NSZone *<span class="function">)</span>zone
+{
+   <span class="instruction"> return </span>self;
+}
+</code></pre><h3 id="在MRC下实现">在MRC下实现</h3><p>在MRC下，单例的主要创建方法和ARC都一致，但是需要额外处理 <code>release</code>，<code>retain</code> 和 <code>retainCount</code> 等方法，这样这个单例对象既不会被销毁，也不会增加计数。</p>
+<ul>
+<li><code>release</code>方法中什么也不做</li>
+<li><code>retain</code>方法直接返回自己，不进行其他操作</li>
+<li><p><code>retainCount</code>方法中返回一个很大的数或者是一个负数，这样有经验的程序员就会知道这是一个单例</p>
+<pre><code>+ (instancetype)shareTools 
+{
+<span class="keyword">return</span> [[<span class="keyword">self</span> alloc] <span class="keyword">init</span>];
+}
+</code></pre></li>
+</ul>
+<pre><code>+ (instancetype)allocWithZone:(<span class="keyword">struct</span> _<span class="built_in">NSZone</span> *)zone
+{
+<span class="keyword">static</span> <span class="keyword">id</span> instance;
+
+<span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;
+
+<span class="built_in">dispatch_once</span>(&amp;onceToken, ^{
+    instance = [<span class="keyword">super</span> allocWithZone:zone]
+});
+
+<span class="keyword">return</span> instance;
+}
+
+
+- (<span class="keyword">id</span>)copyWithZone:(<span class="built_in">NSZone</span> *)zone
+{
+    <span class="keyword">return</span> <span class="keyword">self</span>;
+}
+
+
+- (<span class="keyword">id</span>)mutableCopyWithZone:(<span class="built_in">NSZone</span> *)zone
+{
+    <span class="keyword">return</span> <span class="keyword">self</span>;
+}
+
+
+- (<span class="keyword">oneway</span> <span class="keyword">void</span>)release
+{
+    <span class="comment">// 这个单例对象的release方法什么都不做</span>
+}
+
+
+- (instancetype)retain
+{
+    <span class="keyword">return</span> <span class="keyword">self</span>;
+}
+
+
+- (<span class="built_in">NSUInteger</span>)retainCount
+{
+    <span class="keyword">return</span> MAXFLOAT;
+}
+</code></pre><h3 id="把单例抽取成宏">把单例抽取成宏</h3><p>一个项目中可能存在多个单例，如果每一个单例都要重新实现一次，这样会造成大量的代码冗余。又因为单例无法继承，所以最好方式是把实现单例的代码抽取成一个带参数的宏，可以给不同单例使用。</p>
+<ul>
+<li><p>声明</p>
+<pre><code><span class="hexcolor">#def</span>ine <span class="function"><span class="title">SingleInterface</span><span class="params">(name)</span></span> +(instancetype)share##name
+</code></pre></li>
+<li><p>实现</p>
+<pre><code><span class="special">#</span>if __has_feature(objc_arc)
+// ARC
+<span class="special">#</span>define SingleImplenmentation(name) +(instancetype)share<span class="special">#</span><span class="special">#</span>name <span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>return <span class="special">[</span><span class="special">[</span>self alloc<span class="special">]</span> init<span class="special">]</span>;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>+ (instancetype)allocWithZone:(struct _NSZone *)zone<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    static id instance;<span class="command">\
+</span>    static dispatch_once_t onceToken;<span class="command">\
+</span>    dispatch_once(<span class="special">&amp;</span>onceToken, ^<span class="special">{</span><span class="command">\
+</span>    instance = <span class="special">[</span>super allocWithZone:zone<span class="special">]</span><span class="command">\
+</span><span class="special">}</span>);<span class="command">\
+</span>    return instance;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>- (id)copyWithZone:(NSZone *)zone<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    return self;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>- (id)mutableCopyWithZone:(NSZone *)zone<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    return self;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span><span class="special">#</span>else
+// MRC
+<span class="special">#</span>define SingleImplenmentation(name) +(instancetype)share<span class="special">#</span><span class="special">#</span>name <span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>return <span class="special">[</span><span class="special">[</span>self alloc<span class="special">]</span> init<span class="special">]</span>;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>+ (instancetype)allocWithZone:(struct _NSZone *)zone<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    static id instance;<span class="command">\
+</span>    static dispatch_once_t onceToken;<span class="command">\
+</span>    dispatch_once(<span class="special">&amp;</span>onceToken, ^<span class="special">{</span><span class="command">\
+</span>    instance = <span class="special">[</span>super allocWithZone:zone<span class="special">]</span><span class="command">\
+</span><span class="special">}</span>);<span class="command">\
+</span>    return instance;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>- (id)copyWithZone:(NSZone *)zone<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    return self;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>- (id)mutableCopyWithZone:(NSZone *)zone<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    return self;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>- (oneway void)release<span class="command">\
+</span><span class="special">{</span> <span class="special">}</span><span class="command">\
+</span>- (instancetype)retain<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    return self;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span>- (NSUInteger)retainCount<span class="command">\
+</span><span class="special">{</span><span class="command">\
+</span>    return MAXFLOAT;<span class="command">\
+</span><span class="special">}</span><span class="command">\
+</span><span class="special">#</span>endif
+</code></pre><p>上面代码中，判断是ARC还是MRC的宏是：</p>
+<pre><code><span class="preprocessor">#<span class="keyword">if</span> __has_feature(objc_arc)</span>
+<span class="comment">//ARC</span>
+<span class="preprocessor">#<span class="keyword">else</span></span>
+<span class="comment">//MRC</span>
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+</code></pre></li>
+</ul>
+<p>抽取成宏之后，代码的阅读性很差，不过这些代码只需要痛苦一次，以后实现单例把上述代码直接拷贝进来即可。大致使用步骤如下：</p>
+<ul>
+<li>把上面的<strong>宏声明</strong>和<strong>宏实现</strong>的代码写到一个<code>Single.h</code>文件中</li>
+<li>某个类(比如 NetworkTools)想成为单例，<code>#import &quot;Single.h&quot;</code></li>
+<li>在<code>NetworkTools.h</code>中写上<code>SingleInterface(NetworkTools)</code></li>
+<li>在<code>NetworkTools.m</code>中写上<code>SingleImplementation(NetworkTools)</code></li>
+</ul>
+<h3 id="OC下另一个单例的写法（简洁快速）">OC下另一个单例的写法（简洁快速）</h3><p>OC中，简洁快速写一个可以用的工具类单例，以 <code>NetworkTools</code>为例</p>
+<pre><code>+<span class="function"> (</span>instancetype<span class="function">)</span>shareNetworkTools
+{
+   <span class="keyword"> static</span> NetworkTools *instance;
+   <span class="keyword"> static</span> dispatch_once_t onceToken;
+   <span class="function"> dispatch_once(</span>&amp;onceToken, ^{
+       <span class="instruction"> instance </span>= <span class="keyword">[</span><span class="keyword">[</span>NetworkTools alloc] init];
+    }<span class="function">)</span>;
+   <span class="instruction"> return </span>instance;
+}
+</code></pre><h2 id="用Swift语言实现单例">用Swift语言实现单例</h2><p>在Swift语言中实现单例比OC中简单，并且有多种实现方式(仍以<code>NetworkTools</code>为例)：</p>
+<ul>
+<li><p>第一种方式：</p>
+<pre><code>static var instance: NetworkTools?<span class="keyword">
+static</span> var onceToken: dispatch_once_t = 0
+
+class func<span class="function"> shareNetworkTools(</span><span class="function">)</span> -&gt; NetworkTools
+{
+   <span class="function"> dispatch_once(</span>&amp;onceToken<span class="function">)</span> {<span class="function"> (</span><span class="function">)</span> -&gt; Void in
+       <span class="instruction"> instance </span>=<span class="function"> NetworkTools(</span><span class="function">)</span>
+    }
+   <span class="instruction"> return </span>instance!
+}
+</code></pre></li>
+<li><p>第二种方式：</p>
+<pre><code><span class="comment">// Swift中的let是线程安全的，let只能赋值一次</span>
+<span class="keyword">static</span> <span class="keyword">let</span> instance: <span class="type">NetworkTools</span> = <span class="type">NetworkTools</span>()
+
+<span class="keyword">override</span> <span class="keyword">init</span>() {
+
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">shareNetworkTools</span>() -&gt; <span class="title">NetworkTools</span>
+</span>{
+    <span class="keyword">return</span> instance
+}
+</code></pre></li>
+<li><p>第三种方式：(最推荐这样编写)</p>
+<pre><code><span class="comment">// Swift中单例的命名规范：以share开头，后面跟上Instance</span>
+static let shareInstance = <span class="function"><span class="title">NetworkTools</span><span class="params">()</span></span>
+</code></pre></li>
+</ul>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/05/03/搭建Hexo博客/" rel="next" title="搭建Hexo博客">
+                <i class="fa fa-chevron-left"></i> 搭建Hexo博客
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/07/15/两个数组小问题（合并，左右划分）/" rel="prev" title="两个数组小问题（合并，左右划分）">
+                两个数组小问题（合并，左右划分） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2015/06/03/iOS中的单例/"
+     data-title="iOS中的单例"
+     data-content=""
+     data-url="http://yoursite.com/2015/06/03/iOS中的单例/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/06/03/iOS中的单例/"
+           data-title="iOS中的单例" data-url="http://yoursite.com/2015/06/03/iOS中的单例/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="https://avatars1.githubusercontent.com/u/32269?v=3&s=460" alt="MingHe" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">MingHe</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">即使是敲代码，也要听莫扎特</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/CodeMozart" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2827887400/profile?topnav=1&wvr=6" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/zhao-ming-he" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> zhihu
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是单例"><span class="nav-number">1.</span> <span class="nav-text">什么是单例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例对象的特点"><span class="nav-number">2.</span> <span class="nav-text">单例对象的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例对象应用场景"><span class="nav-number">3.</span> <span class="nav-text">单例对象应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例使用的注意点"><span class="nav-number">4.</span> <span class="nav-text">单例使用的注意点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用Objective-C语言实现单例"><span class="nav-number">5.</span> <span class="nav-text">用Objective-C语言实现单例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在ARC下实现"><span class="nav-number">5.1.</span> <span class="nav-text">在ARC下实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在MRC下实现"><span class="nav-number">5.2.</span> <span class="nav-text">在MRC下实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#把单例抽取成宏"><span class="nav-number">5.3.</span> <span class="nav-text">把单例抽取成宏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OC下另一个单例的写法（简洁快速）"><span class="nav-number">5.4.</span> <span class="nav-text">OC下另一个单例的写法（简洁快速）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用Swift语言实现单例"><span class="nav-number">6.</span> <span class="nav-text">用Swift语言实现单例</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MingHe</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"codemozart"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>
